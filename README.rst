@@ -1,10 +1,25 @@
-## Install
+RAINBOW - An open-source pipeline for rare genetic disease analysis
+===================================================================
+
+What is RainBow?
+---------------
+(..to be done)
+
+
+License
+-------
+(..to be done)
+
+
+How to use it?
+--------------
+
+1. Download files
 Download required softwares and databases for running Rainbow.
 
     ./setup.sh
 
-i
-## Install Platypus
+2. Install Platypus
 Download and install Platypus (preferably v0.7.9.1). Then, move or copy the
 Platypus directory to /path/to/rainbow/bin.
 We will refer to "/path/to/rainbow" as rainbow_dir from now on.
@@ -16,7 +31,7 @@ or,
     cp Platypus_X.X.X /path/to/rainbow/bin/
 
 
-## Link raw fastq/fastq.gz data
+3. Link raw fastq/fastq.gz data
 Rename or link the fastq files of your samples to /path/to/data/fastq/"ID"
 We will refer to "/path/to/data" as data_dir from now on.
 Here, "ID" should be the case ID of your sample, e.g. test
@@ -31,7 +46,7 @@ Example:
     mv /path_to/SRR000000_2.fastq.gz data_dir/fastq/test/test_2.fastq.gz
 
 
-## Write ID and info files
+4. Write ID and info files
 For each case, one ID file should be created.
 For each case or case ID, at least one sample ID should be written in
 an ID file. 
@@ -56,7 +71,7 @@ Then, when
 should be printed, disregarding the order of the sample IDs.
 
 
-## Run read processing and variant calling pipeline
+5. Run read processing and variant calling pipeline
 Your working directory is your data directory, where you have put your fastq 
 files in. The working directory is the data_dir which has been mentioned above.
 Also, do not wrongly input the end form of your sequencing samples (se for 
@@ -67,7 +82,7 @@ Example:
     rainbow_dir/run_proc_pipeline.sh test pe rainbow_dir/info/id_test.txt
 
 
-## Make your analysis report
+6. Make your analysis report
 After finishing your case information file in (e.g. 
 rainbow_dir/info/info_test.txt) run the make_report.py script.
 
@@ -78,14 +93,12 @@ Example:
 Then your report output will be in data_dir/var_flt/"ID"/*.result.txt
 
 
-## Running test sample
+7. Running test sample
 The following is a run example using the test data. Run the following scripts 
 after installation and data download are complete.
 
-    
 
-
-## Another run example
+8. Another run example
 The following is a run example, after installation and data download are 
 complete.
 
