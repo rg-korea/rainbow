@@ -1,0 +1,26 @@
+# Database and software settings
+
+# Platypus must be downloaded built, and then moved to rainbow-x.y/bin/
+platypus_pf=Platypus_0.7.9.1
+
+broad_ftp=ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19
+
+python_url=https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
+python_pf=Python-2.7.11
+
+bitarray_url=https://pypi.python.org/packages/source/b/bitarray/bitarray-0.8.1.tar.gz
+bitarray_pf=bitarray-0.8.1
+
+bwa_url=http://sourceforge.net/projects/bio-bwa/files/bwa-0.7.12.tar.bz2
+bwa_pf=bwa-0.7.12
+
+picard_url=http://sourceforge.net/projects/picard/files/picard-tools/1.96/picard-tools-1.96.zip
+picard_pf=picard-tools-1.96
+
+samtools_url=http://sourceforge.net/projects/samtools/files/samtools/1.3/samtools-1.3.tar.bz2
+samtools_pf=samtools-1.3
+
+vep_url=https://github.com/Ensembl/ensembl-tools/archive/release/78.zip
+vep_pf=78
+
+bitarray_dict_url=ftp://192.168.1.100

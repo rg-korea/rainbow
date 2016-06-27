@@ -1,0 +1,44 @@
+# Case ID
+#   this should be the ID of a family
+test
+
+# Sample ID (options: SAMPLE_ID, n [input 'n' if the corresponding sample does not exist]). 
+# ALWAYS: patient/father/mother order.
+#   this should be the sample IDs/prefices of each fastq file
+#   trio example: test_patient/test_father/test_mother (if the Case ID is "test";
+#       if the Case ID is "family314", and the sample IDs of the patient, father, and mother
+#       are p, f, and m, respectively, you shoud write family314_p/family314_f/family314_m;
+#       these sample IDs should be identical to the ones you write on your "id_CASE_ID.txt")
+#   singleton example: test_patient/n/n
+#   patient & father example: test_patient/test_father/n
+#   patient & mother example: test_patient/n/test_mother
+test_patient/test_father/test_mother
+
+# Affected? (options: y, n). 
+# ALWAYS: patient/father/mother order.
+#   only the affected individual should be annotated 'y'
+#   trio example (autosomal dominant case where the patient and the father is affected): y/y/n
+#   trio example (de novo case where only the patient is affected): y/n/n
+#   singleton example (only the patient is affected and sequenced): y/n/n
+y/n/n
+
+# Inheritance type (options: AD[autosomal dominant], AR[autosomal recessive], 
+#       XD[X-linked dominant], XR[X-linked recessive], DN[de novo], 
+#       AC[autosomal compound heterozygote], XC[X-linked compound heterozygote], 
+#       YL[Y-linked], MT[mitochondrial])
+# ALWAYS: separated by commas and only commas /,/ 
+#   example: AR,DN,AC
+#   example: AR
+#   NOT an example: AD, XD
+#   NOT an example: ;D (though it may look funny; not available at present)
+#   list of inheritance types (or pedigree models) you want to analyze
+#   when only the patient is affected --> possibly either AR, DN, and/or AC
+#   then write: AR,DN,AC
+AR
+
+# Filter stringency (options: 1, 2, 3, 4 [lenient to stringent])
+# ALWAYS: separated by commas and only commas /,/
+#   example: 1,2,3,4
+#   example: 4
+#   NOT an example: 1, 2, 3, 4 or 1 2 3 4
+1,2,3,4
