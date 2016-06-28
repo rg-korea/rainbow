@@ -20,7 +20,10 @@ picard_pf=picard-tools-1.96
 samtools_url=http://sourceforge.net/projects/samtools/files/samtools/1.3/samtools-1.3.tar.bz2
 samtools_pf=samtools-1.3
 
-vep_url=https://github.com/Ensembl/ensembl-tools/archive/release/78.zip
-vep_pf=78
+htslib_url=https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2
+htslib_pf=htslib-1.3.1
+
+vep_url=https://github.com/Ensembl/ensembl-tools/archive/release/84.zip
+vep_pf=84
 
 bitarray_dict_url=ftp://192.168.1.100
