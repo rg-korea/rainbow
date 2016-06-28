@@ -3,6 +3,8 @@ RAINBOW - An open-source pipeline for rare genetic disease analysis
 
 What is RainBow?
 ---------------
+visit : http://www.raregenomics.org/
+
 (..to be done)
 
 
