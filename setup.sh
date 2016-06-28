@@ -32,7 +32,7 @@ make install
 cd $wkdir
 rm $bin/$python_pf.tgz
 
-# Install bitarray-0.8.1 (python module)
+# Install bitarray (python module)
 wget $bitarray_url -P $bin
 [ ! -f $bin/$bitarray_pf.tar.gz ] && { echo "ERROR: $bin/$bitarray_pf.tar.gz does not exist." 1>&2; exit 1; }
 tar -zxf $bin/$bitarray_pf.tar.gz -C $bin
@@ -42,7 +42,7 @@ $bin/$python_pf/python ./setup.py install
 cd $wkdir
 rm $bin/$bitarray_pf.tar.gz
 
-# Install bwa-0.7.12 (must have "mem" option)
+# Install bwa (must have "mem" option)
 wget $bwa_url -P $bin
 [ ! -f $bin/$bwa_pf.tar.bz2 ] && { echo "ERROR: $bin/$bwa_pf.tar.bz2 does not exist." 1>&2; exit 1; }
 bzip2 -d $bin/$bwa_pf.tar.bz2
@@ -61,7 +61,7 @@ unzip $bin/$picard_pf.zip -d $bin
 cd $wkdir
 rm $bin/$picard_pf.zip
 
-# Install samtools-1.3
+# Install samtools
 wget $samtools_url -P $bin
 [ ! -f $bin/$samtools_pf.tar.bz2 ] && { echo "ERROR: $bin/samtools-1.3.tar.bz2 does not exist." 1>&2; exit 1; }
 bzip2 -d $bin/$samtools_pf.tar.bz2
@@ -74,6 +74,18 @@ rm $bin/$samtools_pf.tar
 # Install Platypus
 ## TO-DO
 
+# Install htslib
+wget $htslib_url -P $bin
+bzip2 -d $bin/$htslib_pf.tar.bz2
+tar -xf $bin/$htslib_pf.tar -C $bin
+cd $bin/$htslib_pf
+mkdir $HOME/rainbow
+./configure --prefix=$HOME/rainbow
+export PATH=$PATH:$HOME/rainbow/bin
+make
+make install
+rm $bin/$htslib_pf.tar
+
 # Install Ensembl Varient Effect Predictor 78
 wget $vep_url -P $bin
 [ ! -f $bin/$vep_pf.zip ] && { echo "ERROR: $bin/$vep_pf.zip does not exist." 1>&2; exit 1; }
@@ -81,7 +93,7 @@ unzip $bin/$vep_pf.zip -d $bin
 cd $bin/ensembl-tools-release-$vep_pf/scripts/variant_effect_predictor
 [ ! -d $wkdir/data/db ] && { mkdir $wkdir/data/db; }
 [ ! -d $wkdir/data/db/vep ] && { mkdir $wkdir/data/db/vep; }
-printf 'y\n35' | $perl $bin/ensembl-tools-release-$vep_pf/scripts/variant_effect_predictor/INSTALL.pl -c $wkdir/data/db/vep --SPECIES homo_sapiens_refseq --ASSEMBLY GRCh37
+printf 'y\n43' | $perl $bin/ensembl-tools-release-$vep_pf/scripts/variant_effect_predictor/INSTALL.pl -c $wkdir/data/db/vep --SPECIES homo_sapiens_refseq --ASSEMBLY GRCh37
 cd $wkdir
 rm $bin/$vep_pf.zip
 
