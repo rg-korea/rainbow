@@ -24,6 +24,24 @@ Process short reads and call variants.
 Filter variants and make causal variant candidate report.
 
 
+Third party software/database license
+-------------------------------------
+RainBow contains files not developed by the Rare Genomics Institute Korea.
+Files in the subdirectory bin/ and files downloaded by setup.py follow their
+own licenses. 
+Specifically, BWA and SAMtools follow MIT License, 
+Picard and Ensembl Variant Effect Predictor follow MIT License and Apache 
+License v.2, and Platypus follows GNU GPLv3.
+Processed databases in the data/db/ba_dict/ subdirectory have been constructed 
+from SNP data obtained from dbSNP, 1000 genomes, Genome of the Netherlands, 
+UCSC common SNPs, Exome Variant Server, Exome Aggregation Consortium, and 
+RefSeq database of Ensembl Variant Effect Predictor. 
+Processed databases from Exome Variant Server and Exome Aggregation Consortium 
+follow Open Database License, 
+RefSeq database of Ensembl Variant Effect Predictor follow Apache License v.2, 
+and all other databases are public.
+
+
 License
 -------
 The MIT License (MIT)
