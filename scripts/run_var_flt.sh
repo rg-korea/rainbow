@@ -1,3 +1,6 @@
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 # Settings
 perl=/usr/bin/perl # do not change version from v5.18.2
 [ ! -f $perl ] && { echo "ERROR: $perl does not exist."; exit 1; }

@@ -1,4 +1,6 @@
 #!/bin/bash
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
 # Settings
 perl=/usr/bin/perl

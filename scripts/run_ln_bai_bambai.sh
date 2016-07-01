@@ -1,3 +1,6 @@
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 [ $# -ne 1 ] && { echo -e "\nUsage: $0 <in.dir>\n"; exit 1; }
 
 in_dir=$1 # bai file dir

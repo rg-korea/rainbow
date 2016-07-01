@@ -1,3 +1,6 @@
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 [ $# -ne 4 ] && { echo -e "\nUsage: $0 <working.dir> <in.dir> <out.dir>\n"; exit 1; }
 rc=$wkdir/rc # rc file
 [ ! -f $rc ] && { echo "ERROR: $rc does not exist." 1>&2; exit 1; }

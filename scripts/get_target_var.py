@@ -1,6 +1,8 @@
 # Input VCF, input BAD (bitarray dictionary) to select exonic variants.
 # BAD format example: bad["chr12"] = bitarray("0000000001111111111000000 ...")
 # where the 1's are exon regions made from a Captured_Exon_Regions.bed file.
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
 ############
 ##  INIT  ##

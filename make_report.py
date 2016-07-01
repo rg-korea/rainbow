@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
 ############
 ##  INIT  ##
@@ -41,6 +43,11 @@ def get_flt_opt( inh_type ):
         pat_flt = "hom"
         fat_flt = "hom"
         assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
+        mot_flt = "hom" if mot_aff=="y" else "het1"
+    elif inh_type == "XE": # X-linked recessive. e.g. XY x X'X --> X'Y
+        inh_flt = "inherited"
+        pat_flt = "hom"
+        fat_flt = "hom" if fat_aff=="y" else "ref"
         mot_flt = "hom" if mot_aff=="y" else "het1"
     elif inh_type == "DN": # de novo. e.g. AA x AA --> Aa
         inh_flt = "de_novo"

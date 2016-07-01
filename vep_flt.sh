@@ -1,3 +1,7 @@
+#!/bin/bash
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 [ $# -ne 2 ] && { echo -e "\nUsage: $0 <project symbol> <in.vep>\n"; exit 1; }
 psym=$1
 in_vep=$2
