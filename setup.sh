@@ -75,7 +75,10 @@ cd $wkdir
 rm $bin/$samtools_pf.tar
 
 # Install Platypus
-## TO-DO
+tar -zxf $bin/$platypus_pf.tar.gz -C $bin
+cd $bin/$platypus_pf
+./buildPlatypus.sh
+cd $wkdir
 
 # Install htslib
 wget $htslib_url -P $bin

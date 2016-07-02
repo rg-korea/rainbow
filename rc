@@ -1,6 +1,4 @@
 # Database and software settings
-
-# Platypus must be downloaded built, and then moved to rainbow-x.y/bin/
 platypus_pf=Platypus_0.7.9.1
 
 broad_ftp=ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19
