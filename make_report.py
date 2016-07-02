@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Created: December 22nd 2015
 # Last update: July 1st 2016
 # Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 

@@ -1,6 +1,7 @@
 # From input VCF, select variants that corresponds to an input pedigree.
 # Pedigree examples: de_novo, recessive, dominant, X-linked, Y-linked, 
 # mitochondrial, compound_heterozygote. Only the former two pedigrees 
+# Created: January 15th 2015
 # Last update: July 1st 2016
 # Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
