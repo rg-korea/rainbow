@@ -31,6 +31,11 @@ Files in the subdirectory bin/ and files downloaded by setup.py follow their
 own licenses. We recommend you read them, since not all of them follow the same 
 license as RainBow.
 
+Among the third party softwares, Platypus maintains a mailing list to inform 
+users of latest updates on Platypus. You can register to this mailing list by 
+enlisting on the following URL from The Wellcome Trust Centre for Human 
+Genetics: http://www.well.ox.ac.uk/software-download-registration
+
 
 License
 -------
