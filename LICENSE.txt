@@ -1,8 +1,3 @@
-The following  license applies to all parts of this software except the third 
-party software/databases documented below:
-
-==========
-
 The MIT License (MIT)
 Copyright (c) 2016 Rare Genomics Institute Korea
 
@@ -23,20 +18,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-==========
-
-Files in the subdirectory bin/ and files downloaded by setup.py follow their
-own licenses. We recommend you read them after download.
-
-Specifically, BWA and SAMtools follow MIT License, 
-Picard and Ensembl Variant Effect Predictor follow MIT License and Apache 
-License v.2, and Platypus follows GNU GPLv3.
-Processed databases in the data/db/ba_dict/ subdirectory have been constructed 
-from SNP data obtained from dbSNP, 1000 genomes, Genome of the Netherlands, 
-UCSC common SNPs, Exome Variant Server, Exome Aggregation Consortium, and 
-RefSeq database of Ensembl Variant Effect Predictor. 
-Processed databases from Exome Variant Server and Exome Aggregation Consortium 
-follow Open Database License, 
-RefSeq database of Ensembl Variant Effect Predictor follow Apache License v.2, 
-and all other databases are public.

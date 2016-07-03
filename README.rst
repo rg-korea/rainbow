@@ -40,7 +40,8 @@ Genetics: http://www.well.ox.ac.uk/software-download-registration
 License
 -------
 RainBow follows The MIT License (MIT). This license applies to all parts of this
-software except the third party software/databases documented in LICENSE.txt. 
+software except the third party software/databases documented in 
+THIRD-PARTY-NOTICES.txt. 
 For further information, we recommend you read our LICENSE.txt or the contents 
 in https://opensource.org/licenses/MIT
 
