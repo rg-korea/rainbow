@@ -1,3 +1,7 @@
+# Created: December 20th 2015
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 thread=1 # number of threads for multi-processing
 
 [ $# -ne 4 ] && { echo -e "\nUsage: $0 <data.dir> <case.symbol> <se/pe> <id.file>\n"; exit 1; }

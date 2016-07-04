@@ -22,19 +22,19 @@ test_patient/test_father/test_mother
 #   singleton example (only the patient is affected and sequenced): y/n/n
 y/n/n
 
-# Inheritance type (options: AD[autosomal dominant], AR[autosomal recessive], 
-#       XD[X-linked dominant], XR[X-linked recessive], DN[de novo], 
-#       AC[autosomal compound heterozygote], XC[X-linked compound heterozygote], 
+# Inheritance type (options: AD[autosomal dominant], AH[autosomal homozygous], 
+#       XD[X-linked dominant], XH[X-linked homozygous], DN[de novo], 
+#       AC[autosomal compound heterozygous], XC[X-linked compound heterozygous], 
 #       YL[Y-linked], MT[mitochondrial])
 # ALWAYS: separated by commas and only commas /,/ 
-#   example: AR,DN,AC
-#   example: AR
+#   example: AH,DN,AC
+#   example: AH
 #   NOT an example: AD, XD
 #   NOT an example: ;D (though it may look funny; not available at present)
 #   list of inheritance types (or pedigree models) you want to analyze
-#   when only the patient is affected --> possibly either AR, DN, and/or AC
-#   then write: AR,DN,AC
-AR
+#   when only the patient is affected --> possibly either AH, DN, and/or AC
+#   then write: AH,DN,AC
+AH
 
 # Filter stringency (options: 1, 2, 3, 4 [lenient to stringent])
 # ALWAYS: separated by commas and only commas /,/

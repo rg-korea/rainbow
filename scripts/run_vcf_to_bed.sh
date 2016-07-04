@@ -1,3 +1,7 @@
+# Created: December 20th 2015
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 [ $# -ne 1 ] && { echo -e "\nUsage: $0 <in.vcf>\n"; exit 1; }
 
 vcf=$1

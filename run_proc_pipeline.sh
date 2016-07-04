@@ -1,4 +1,8 @@
 #!/bin/bash
+# Created: December 23nd 2015
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 [ $# -ne 4 ] && { echo -e "\nUsage: $0 <data.dir> <case.symbol> <end.form> <id.file>\n" 1>&2; exit 1; }
 
 # Settings

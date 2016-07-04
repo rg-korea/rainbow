@@ -1,3 +1,7 @@
+# Created: February 20th 2015
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 [ $# -ne 4 ] && { echo -e "\nUsage: $0 <data.dir> <case.symbol> <in.bam.symbol> <id.file>\n"; exit 1; }
 
 abs_path=`readlink -e $0`

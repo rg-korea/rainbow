@@ -1,4 +1,7 @@
 #!/usr/bin/python
+# Created: December 22nd 2015
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
 ############
 ##  INIT  ##
@@ -31,16 +34,15 @@ def get_flt_opt( inh_type ):
         pat_flt = "het1_hom"
         fat_flt = "hom" if fat_aff=="y" else "ref"
         mot_flt = "het1" if mot_aff=="y" else "ref"
-    elif inh_type == "AR": # autosomal recessive. e.g. Aa x Aa --> aa
+    elif inh_type == "AH": # autosomal homozygous. e.g. Aa x Aa --> aa
         inh_flt = "inherited"
         pat_flt = "hom"
         fat_flt = "hom" if fat_aff=="y" else "het1"
         mot_flt = "hom" if mot_aff=="y" else "het1"
-    elif inh_type == "XR": # X-linked recessive. e.g. X'Y x X'X --> X'X'
+    elif inh_type == "XH": # X-linked homozygous. e.g. XY x X'X --> X'Y
         inh_flt = "inherited"
         pat_flt = "hom"
-        fat_flt = "hom"
-        assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
+        fat_flt = "hom" if fat_aff=="y" else "ref"
         mot_flt = "hom" if mot_aff=="y" else "het1"
     elif inh_type == "DN": # de novo. e.g. AA x AA --> Aa
         inh_flt = "de_novo"
@@ -161,7 +163,7 @@ for inh_type in inh_types:
     fat_flt = "-" if fat_id=="-" else fat_flt
     mot_flt = "-" if mot_id=="-" else mot_flt
     
-    ch_flag = "1" if inh_type.count("compound heterozygote") else "0"
+    ch_flag = "1" if inh_type in ["AC", "XC"] else "0" # compount het?
     
     for stringency in stringencies:
         maf_cut = get_maf_cut(stringency)

@@ -1,4 +1,7 @@
 #!/bin/bash
+# Created: December 23nd 2015
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
 # Settings
 perl=/usr/bin/perl
@@ -72,7 +75,10 @@ cd $wkdir
 rm $bin/$samtools_pf.tar
 
 # Install Platypus
-## TO-DO
+tar -zxf $bin/$platypus_pf.tar.gz -C $bin
+cd $bin/$platypus_pf
+./buildPlatypus.sh
+cd $wkdir
 
 # Install htslib
 wget $htslib_url -P $bin

@@ -1,8 +1,13 @@
+#!/bin/bash
+# Created: August 9th 2015
+# Last update: July 1st 2016
+# Author: Seongmin Choi <seongmin.choi@raregenomics.org>
+
 [ $# -ne 2 ] && { echo -e "\nUsage: $0 <project symbol> <in.vep>\n"; exit 1; }
 psym=$1
 in_vep=$2
 
-echo "[`date`] $0 run initiated." 1>&2
+echo "[`date`] $0 run initiated."
 
 cmd="cat $in_vep"
 cmd="$cmd | grep NM_"

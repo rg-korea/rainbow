@@ -3,14 +3,47 @@ RAINBOW - An open-source pipeline for rare genetic disease analysis
 
 What is RainBow?
 ---------------
-visit : http://www.raregenomics.org/
+RainBow is an open-source pipeline to analyze rare disease patient genomes.
+It aims to make a causal variant candidate report for a specific Mendelian 
+disease, in order to promotie diagnosis by the patient's physician.
 
-(..to be done)
+It is developed by Rare Genomics Institute Korea (or RG Korea. Visit 
+http://www.raregenomics.or.kr for further information),
+a Korean branch of the non-profit organization Rare Genomics Institute
+(or RG. Visit http://www.raregenomics.org for further information).
+
+RainBow consists of three parts:
+
+1. Setup (setup.py)
+Download required databases and softwares to local and install them.
+
+2. Run short read processing pipeline (run_proc_pipeline.sh)
+Process short reads and call variants.
+
+3. Make causal variant report (make_report.py)
+Filter variants and make causal variant candidate report.
+
+
+Third party software/database license
+-------------------------------------
+RainBow contains files not developed by the Rare Genomics Institute Korea.
+Files in the subdirectory bin/ and files downloaded by setup.py follow their
+own licenses. We recommend you read them, since not all of them follow the same 
+license as RainBow.
+
+Among the third party softwares, Platypus maintains a mailing list to inform 
+users of latest updates on Platypus. You can register to this mailing list by 
+enlisting on the following URL from The Wellcome Trust Centre for Human 
+Genetics: http://www.well.ox.ac.uk/software-download-registration
 
 
 License
 -------
-(..to be done)
+RainBow follows The MIT License (MIT). This license applies to all parts of this
+software except the third party software/databases documented in 
+THIRD-PARTY-NOTICES.txt. 
+For further information, we recommend you read our LICENSE.txt or the contents 
+in https://opensource.org/licenses/MIT
 
 
 How to use it?
