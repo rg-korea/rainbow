@@ -1,6 +1,6 @@
 #!/bin/bash
 # Created: December 23nd 2015
-# Last update: July 1st 2016
+# Last update: July 8th 2016
 # Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
 # Settings
@@ -10,6 +10,12 @@ perl=/usr/bin/perl
 wkdir=`pwd` # working directory
 bin=$wkdir/bin
 [ ! -d $bin ] && { mkdir $bin; }
+
+pm=$HOME/perl5 # perl modules config
+[ ! -d $pm ] && { mkdir $pm; }
+export PERL5LIB=$pm/share/perl5:$PERL5LIB
+export PERL5LIB=$pm/lib64/perl5:$PERL5LIB
+export PERL5LIB=$pm/lib/perl5:$PERL5LIB
 
 rc=./rc # rc file
 [ ! -f $rc ] && { echo "ERROR: $rc does not exist." 1>&2; exit 1; }
@@ -80,6 +86,16 @@ cd $bin/$platypus_pf
 ./buildPlatypus.sh
 cd $wkdir
 
+# Install Recursive.pm
+url=http://search.cpan.org/CPAN/authors/id/D/DM/DMUEY/File-Copy-Recursive-0.38.tar.gz
+wget $url -P $bin
+tar -zxf $bin/File-Copy-Recursive-0.38.tar.gz -C $bin
+cd $bin/File-Copy-Recursive-0.38
+perl Makefile.PL PREFIX=$pm
+make
+make install
+cd $wkdir
+
 # Install htslib
 wget $htslib_url -P $bin
 bzip2 -d $bin/$htslib_pf.tar.bz2
@@ -91,15 +107,38 @@ export PATH=$PATH:$HOME/rainbow/bin
 make
 make install
 rm $bin/$htslib_pf.tar
+cd $wkdir
 
-# Install Ensembl Varient Effect Predictor 78
+# Install DBI
+url=http://search.cpan.org/CPAN/authors/id/T/TI/TIMB/DBI-1.636.tar.gz
+wget $url -P $bin
+tar -xzf $bin/DBI-1.636.tar.gz -C $bin
+cd $bin/DBI-1.636
+perl Makefile.PL INSTALL_BASE=$pm
+make
+make install
+cd $wkdir
+
+# Install BioPerl
+url=http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.924.tar.gz
+wget $url -P $bin
+tar -zxf $bin/BioPerl-1.6.924.tar.gz -C $bin
+cd $bin/BioPerl-1.6.924
+printf 'anyyyyyyyyyyyyyyyyyyyyyyyyy' | perl Build.PL PREFIX=$pm LIB=$pm
+yes y | ./Build installdeps
+./Build install
+cd $wkdir
+
+# Install Ensembl Varient Effect Predictor
 wget $vep_url -P $bin
 [ ! -f $bin/$vep_pf.zip ] && { echo "ERROR: $bin/$vep_pf.zip does not exist." 1>&2; exit 1; }
 unzip $bin/$vep_pf.zip -d $bin
-cd $bin/ensembl-tools-release-$vep_pf/scripts/variant_effect_predictor
+vep_dir=$bin/ensembl-tools-release-$vep_pf/scripts/variant_effect_predictor
+export PERL5LIB=$PERL5LIB:$vep_dir
+cd $vep_dir
 [ ! -d $wkdir/data/db ] && { mkdir $wkdir/data/db; }
 [ ! -d $wkdir/data/db/vep ] && { mkdir $wkdir/data/db/vep; }
-printf 'y\n43' | $perl $bin/ensembl-tools-release-$vep_pf/scripts/variant_effect_predictor/INSTALL.pl -c $wkdir/data/db/vep --SPECIES homo_sapiens_refseq --ASSEMBLY GRCh37
+$perl $bin/ensembl-tools-release-$vep_pf/scripts/variant_effect_predictor/INSTALL.pl -a ac -c $wkdir/data/db/vep -s homo_sapiens_refseq -y GRCh37
 cd $wkdir
 rm $bin/$vep_pf.zip
 
