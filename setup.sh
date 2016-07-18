@@ -123,7 +123,7 @@ else {
     cd $bin/$bwa_pf &&
     make &&
     check_file $wkdir/data/index/ucsc.hg19.fasta &&
-    $bin/$bwa_pf/bwa index -a bwtsw $wkdir/data/index/ucsc.hg19.fasta &&
+    bin/$bwa_pf/bwa index -a bwtsw $wkdir/data/index/ucsc.hg19.fasta &&
     cd $wkdir &&
     rm $bin/$bwa_pf.tar &&
     write_log "Completed BWA install." $setup_log || write_error "BWA not installed." $setup_log
@@ -225,7 +225,7 @@ else {
 }; fi
 
 # Install BioPerl
-res=`ls $bin/$bioperl_pf | wc -l` 
+res=`ls $bin/$bioperl_pf | wc -l`
 if [ $res -ne 0 ]; then
     write_log "BioPerl already exists." $setup_log
 else {
@@ -246,7 +246,8 @@ check_dir $wkdir/data/db &&
 [ ! -d $wkdir/data/db/vep ] && { mkdir $wkdir/data/db/vep; } &&
 check_dir $wkdir/data/db/vep &&
 refseq_db_dir=$wkdir/data/db/vep/homo_sapiens_refseq
-res=`ls $refseq_db_dir | grep GRCh37 | wc -l` 
+res=`ls $refseq_db_dir | grep GRCh37 | wc -l`
+>>>>>>> 75dd8d825020fdae18fbfd755b296721fa97b112
 if [ $res -ne 0 ]; then
     write_log "VEP already exists." $setup_log
 else {
