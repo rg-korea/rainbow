@@ -247,7 +247,6 @@ check_dir $wkdir/data/db &&
 check_dir $wkdir/data/db/vep &&
 refseq_db_dir=$wkdir/data/db/vep/homo_sapiens_refseq
 res=`ls $refseq_db_dir | grep GRCh37 | wc -l`
->>>>>>> 75dd8d825020fdae18fbfd755b296721fa97b112
 if [ $res -ne 0 ]; then
     write_log "VEP already exists." $setup_log
 else {
