@@ -2,11 +2,12 @@
 # Last update: July 1st 2016
 # Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
-############
+#specify_variants ###########
 ##  INIT  ##
 ############
 
-import sys
+import sys, time
+from specify_variants import retrieve_vcf_data
 
 idx_s = 9 # column number from where SMP_ID starts
 
@@ -26,16 +27,14 @@ def make_print_line(line, print_alt, print_geno, idx_s):
 # fed
 
 def proc_geno_vcf_format(geno):
-    gt = [int(x) for x in geno[0].split('/')] # [2,3]
-    gl = geno[1]
-    gof = geno[2]
-    gq = geno[3]
-    nr = [int(x) for x in geno[4].split(',')] # depths
-    nv = [int(x) for x in geno[5].split(',')] # navrs
-    abgt = geno[6]
-    inh = geno[7]
+    # GT:NR:NV:AG:IH  1/0:41:23:het1:inherited
+    gt = [int(x) for x in geno["GT"].split('/')] # [2,3]
+    nr = [int(x) for x in geno["NR"].split(',')] # depths
+    nv = [int(x) for x in geno["NV"].split(',')] # navrs
+    abgt = geno["AG"]
+    inh = geno["IH"]
 
-    return (gt, gl, gof, gq, nr, nv, abgt, inh)
+    return (gt, nr, nv, abgt, inh)
 # fed
 
 def get_print_nr_nv(gt, nr, nv):
@@ -61,7 +60,7 @@ def get_print_nr_nv(gt, nr, nv):
 def get_print_geno_alleles(ref_base, alleles, geno):
     # Proc
     ref_alt = [ref_base] + alleles # [0A, 1C,2AC,3G,4T]
-    (gt, gl, gof, gq, nr, nv, abgt, inh) = proc_geno_vcf_format(geno)
+    (gt, nr, nv, abgt, inh) = proc_geno_vcf_format(geno)
 
     print_nr, print_nv = get_print_nr_nv(gt, nr, nv) # NR and NV to print
 
@@ -84,7 +83,7 @@ def get_print_geno_alleles(ref_base, alleles, geno):
     # for end
 
     print_gt = "/".join( [str(x) for x in print_gt] )
-    print_geno = ':'.join([print_gt, gl, gof, gq, print_nr, print_nv, abgt, inh])
+    print_geno = ':'.join([print_gt, print_nr, print_nv, abgt, inh])
     print_alt = ",".join( print_alt )
 
     return print_geno, print_alt
@@ -95,9 +94,11 @@ def proc_line_regard_patient(line, var_info, pat_id):
     field = line.strip().split('\t')
     chrom = field[0]
     one_pos = int(field[1])
-    chrpos = "%s:%s" % (chrom, one_pos)
+    ref_base = field[3]
+    alt_base = field[4]
+    var_key = "%s:%s:%s:%s" % (chrom, one_pos, ref_base, alt_base)
 
-    ref_base, alleles, smp_genos = var_info[chrpos] 
+    ref_base, alleles, smp_genos = var_info[var_key]
         
     pat_geno = smp_genos[ pat_id ]
 
@@ -113,8 +114,6 @@ def proc_line_regard_patient(line, var_info, pat_id):
 if __name__ == "__main__":
 
     # Get system arguments
-    import sys, time
-    from pedigree_flt import retrieve_vcf_data
     prog_name = sys.argv[0].split('/')[-1]
     if len(sys.argv) == 3:
         in_vcf = sys.argv[1]
