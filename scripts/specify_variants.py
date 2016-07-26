@@ -256,17 +256,20 @@ def proc_variant_info( indiv_geno ):
         nr = indiv_geno["NR"]
     elif "DP" in indiv_geno:
         nr = indiv_geno["DP"]
+        nr = '0' if nr == '.' else nr
+        indiv_geno["NR"] = nr # add NR
     else:
-        sys.exit("ERROR: Depth not in FORMATS; indiv_geno = %s" 
-            % indiv_geno)
+        nr = '0'
+        indiv_geno["NR"] = nr # add NR
 
     if "NV" in indiv_geno: # allele depth (ref+alt)
         nv = indiv_geno["NV"]
     elif "AD" in indiv_geno:
-        nv = indiv_geno["AD"].split(',',1)[1] # AD --> NV
+        nv = indiv_geno["AD"].split(',',1)[1] if ',' in indiv_geno["AD"] else '0' # AD --> NV
+        indiv_geno["NV"] = nv # add NV
     else:
-        sys.exit("ERROR: Allele depth not in FORMATS; indiv_geno = %s" 
-            % indiv_geno)
+        nv = '0'
+        indiv_geno["NV"] = nv # add NV
 
     if "AG" in indiv_geno: # abstract genotype
         agt = indiv_geno["AG"]
