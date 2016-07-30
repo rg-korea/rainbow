@@ -79,17 +79,17 @@ for line in open(in_vcf, "r"):
     if 0 in gt: # patient is heterozygous 0/1
         alt_idx = filter(lambda x: x != 0, gt) [0]
         alleles = [ alleles[alt_idx-1] ]
-        depth = nr[alt_idx-1]
+        depth = nr[alt_idx-1] if len(nr) > 1 else nr[0]
         alt_cnt = nv[alt_idx-1]
     elif len(set(gt)) == 1: # patient is homozygous
         alt_idx = gt[0]
         alleles = [ alleles[alt_idx-1] ]
-        depth = nr[alt_idx-1]
+        depth = nr[alt_idx-1] if len(nr) > 1 else nr[0]
         alt_cnt = nv[alt_idx-1]
     else: # patient is heterozygous 1/2
         alt_idx = gt[:] # two alt idxes: [1,2] (or [2,3], [3,4] ...)
         alleles = [ alleles[x-1] for x in alt_idx ]
-        depth_cnt =  [nr[x-1] for x in alt_idx]
+        depth_cnt =  [nr[x-1] for x in alt_idx] if len(nr) > 1 else [nr[0] for x in alt_idx]
         allele_cnt = [nv[x-1] for x in alt_idx]
         depth = max(depth_cnt)
         alt_cnt = max(allele_cnt)
@@ -99,7 +99,7 @@ for line in open(in_vcf, "r"):
 
     ## FILTERS
     # "FILTER" column filter
-    if flt not in ["PASS"]:
+    if flt not in ["PASS", '.']:
         continue
 
     # Variant count filter
