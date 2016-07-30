@@ -64,7 +64,7 @@ for gz_file in ucsc.hg19.dict.gz ucsc.hg19.fasta.fai.gz ucsc.hg19.fasta.gz; do
         write_log "$idx_file already exists." $setup_log
     elif [ -f $wkdir/data/index/$gz_file ]; then {
         write_log "$gz_file already exists." $setup_log &&
-        gzip - d $wkdir/data/index/$gz_file &&
+        gzip -d $wkdir/data/index/$gz_file &&
         write_log "Completed index file unzip." $setup_log ||
         write_error "Index file not unzipped." $setup_log
     } 
