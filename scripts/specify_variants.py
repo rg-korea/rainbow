@@ -1,6 +1,4 @@
-# From input VCF, select variants that corresponds to an input pedigree.
-# Pedigree examples: de_novo, recessive, dominant, X-linked, Y-linked, 
-# mitochondrial, compound_heterozygote. Only the former two pedigrees 
+# From input VCF, label inheritance and genotype information.
 # Created: September 21th 2015
 # Last update: July 1st 2016
 # Author: Seongmin Choi <seongmin.choi@raregenomics.org>
@@ -19,7 +17,8 @@ de_novo_flts = (max_alt_other_for_de_novo,
                 max_alt_freq_other_for_de_novo, 
                 min_depth_other_for_de_novo,
                 min_depth_other_for_alt_de_novo) # tuple of filter cutoffs
-
+formats_string = "GT:NR:NV:AG:IH"
+formats_list = formats_string.split(':')
 
 ###############
 ##  MODULES  ##
@@ -38,18 +37,24 @@ def retrieve_vcf_data(vcf_file, idx_s):
         else:
             field = line.strip().split('\t')
             chrom = field[0] # chromosome
-            one_pos = int(field[1]) # one-based position
-            chrpos = "%s:%s" % (chrom, one_pos) # chr:pos allele position
+            one_pos = field[1] # one-based position
             ref_base = field[3] # C; reference base
             alt_base = field[4] # T,AC ; alterated alleles
             alleles = alt_base.split(',') # [C,T,AG]; alterated alleles
+            var_key = "%s:%s:%s:%s" % (chrom, one_pos, ref_base, alt_base) # chr:pos:ref:alt
             
-            formats = [ x.split(':') for x in field[idx_s:] ] # genotype information of chr:pos, for all samples
-            smp_genos = { x: formats[smp_ids.index(x)] for x in smp_ids } # smp_genos[sample_id] = allele_genotype_information
-            smp_genos["-"] = "0/1/2/3/4/5/6:0.0,0.0,0.0:0:0:0:0".split(':') # if sample not present
+            formats = field[idx_s-1].split(':') # [GT:NR:NV]
+            smp_genos = dict()
+            for i, smp_info_string in enumerate(field[idx_s:]):
+                smp_id = smp_ids[i] # e.g. case_patient
+                smp_info_annotated = zip(formats, smp_info_string.split(':')) # [ ("GT", "0/1"), ("NR", "52"), ... ]
+                smp_info = {x[0]:x[1] for x in smp_info_annotated} # {"GT": "0/1", "NR": "52", ...}
+                smp_genos[smp_id] = smp_info
+            # for i, string done
+            smp_genos["-"] = "0/1/2/3/4/5/6:0.0,0.0,0.0:0:0:0:0".split(':') # if sample not present ##@##
             
             var_tuple = ( ref_base, alleles, smp_genos )
-            var_info[chrpos] = var_tuple # var_info[chr_pos] = variant information for the chr:pos
+            var_info[var_key] = var_tuple # var_info[chr_pos] = variant information for the chr:pos
         # fi
     # for line end
     return var_info 
@@ -58,10 +63,8 @@ def retrieve_vcf_data(vcf_file, idx_s):
 def is_pat_alt_not_in_indiv( pat_geno, indiv_geno ):
     """Determines if the patient's allele genotype information
     does not have its origin from the given individual's allele genotype information."""
-    #pgt, pgl, pgof, pgq, pdepth, pnalt = pat_geno # init
-    pgt, pgl, pgof, pgq, pdepth, pnalt, pagt = pat_geno # init
-    #gt, gl, gof, gq, depth, nalt = indiv_geno
-    gt, gl, gof, gq, depth, nalt, agt = indiv_geno
+    pgt, pdepth, pnalt, pagt = proc_variant_info(pat_geno) # init
+    gt, depth, nalt, agt = proc_variant_info(indiv_geno)
 
     not_in_indiv = False
 
@@ -82,26 +85,6 @@ def is_pat_alt_not_in_indiv( pat_geno, indiv_geno ):
     # for end
 
     return not_in_indiv
-
-#    if gt == './.': # if indiv geno non-det
-#        return False
-#
-#    pat_alleles = pgt.split('/') # patient alleles
-#    indiv_alleles = gt.split('/') # indiv alleles
-#    
-#    for pat_allele in pat_alleles:
-#        if pat_allele == '0': # ignore patient reference allele
-#            continue
-#        elif pat_allele in indiv_alleles: # if pat allele in indiv allele
-#            return False
-#        else:
-#            return True
-#        # fi
-#    # for end
-#
-#    sys.exit("ERROR: patient allele: %s, indiv allele: %s"
-#        % (pgt, gt))
-# fed
 
 def is_pat_alt_in_indiv( pat_geno, indiv_geno ):
     """Determines if the patient's allele genotype information
@@ -132,8 +115,7 @@ def is_pat_alt_in_indiv( pat_geno, indiv_geno ):
 def is_indiv_alt_cnt_infrequent( indiv_geno, de_novo_flts ):
     """Determines if the individual's allele genotype information
     shows a low frequency of variants."""
-    #gt, gl, gof, gq, nr, nv = indiv_geno
-    gt, gl, gof, gq, nr, nv, agt = indiv_geno
+    gt, nr, nv, agt = proc_variant_info(indiv_geno)
 
     (max_alt_other_for_de_novo, 
      max_alt_freq_other_for_de_novo, 
@@ -168,7 +150,7 @@ def is_indiv_alt_cnt_infrequent( indiv_geno, de_novo_flts ):
 def is_indiv_geno_1_alt_hetero( indiv_geno ):
     """Determines if the individual's allele genotype information
     has two heterozygotic alterations; e.g. ref:A/A, indiv:C/T"""
-    gt, gl, gof, gq, depth, nalt = indiv_geno
+    gt, nr, nv, agt = proc_variant_info(indiv_geno)
 
     if gt == './.': # if indiv geno non-det
         return False
@@ -184,7 +166,7 @@ def is_indiv_geno_1_alt_hetero( indiv_geno ):
 def is_indiv_geno_2_alt_hetero( indiv_geno ):
     """Determines if the individual's allele genotype information
     has two heterozygotic alterations; e.g. ref:A/A, indiv:C/T"""
-    gt, gl, gof, gq, depth, nalt = indiv_geno
+    gt, nr, nv, agt = proc_variant_info(indiv_geno)
 
     if gt == './.': # if indiv geno non-det
         return False
@@ -205,7 +187,7 @@ def is_indiv_geno_2_alt_hetero( indiv_geno ):
 def is_indiv_geno_alt_homo( indiv_geno ):
     """Determines if the individual's allele genotype information
     has a homozygotic alteration; e.g. ref:A/A, indiv:T/T"""
-    gt, gl, gof, gq, depth, nalt = indiv_geno
+    gt, nr, nv, agt = proc_variant_info(indiv_geno)
 
     if gt == './.': # if indiv geno non-det
         return False
@@ -226,7 +208,7 @@ def is_indiv_geno_alt_homo( indiv_geno ):
 def is_indiv_geno_var( indiv_geno ):
     """Determines if the individual's allele genotype information
     retains a variant."""
-    gt, gl, gof, gq, depth, nalt = indiv_geno
+    gt, nr, nv, agt = proc_variant_info(indiv_geno)
     if gt in ['./.', '0/0']:
         return False
     elif gt.count('.'):
@@ -265,103 +247,40 @@ def is_alts_from_mot_and_fat(pat_gt, fat_gt, mot_gt):
     return is_in_fat, is_in_mot
 # fed
 
-def is_indiv_alt_recessive( pat_geno, fat_geno, mot_geno ):
-    # Proc
-    pat_gt, pat_gl, pat_gof, pat_gq, pat_depth, pat_nalt = pat_geno
-    fat_gt, fat_gl, fat_gof, fat_gq, fat_depth, fat_nalt = fat_geno
-    mot_gt, mot_gl, mot_gof, mot_gq, mot_depth, mot_nalt = mot_geno
+def proc_variant_info( indiv_geno ):
+    assert "GT" in indiv_geno, ("ERROR: 'GT' not in FORMATS; indiv_geno = %s", 
+        indiv_geno)
+    gt = indiv_geno["GT"] # genotype
 
-    # Only variants in patient
-    is_pat_geno_var = is_indiv_geno_var( pat_geno )
-    if not is_pat_geno_var:
-        return False
+    if "NR" in indiv_geno: # depth
+        nr = indiv_geno["NR"]
+    elif "DP" in indiv_geno:
+        nr = indiv_geno["DP"]
+        nr = '0' if nr == '.' else nr
+        indiv_geno["NR"] = nr # add NR
+    else:
+        nr = '0'
+        indiv_geno["NR"] = nr # add NR
 
-    # Is pat alt hetero or homo
-    is_pat_var_hetero = is_indiv_geno_2_alt_hetero( pat_geno ) # 1/2?
-    is_pat_var_homo = is_indiv_geno_alt_homo( pat_geno ) # 1/1?
-    if not (is_pat_var_hetero or is_pat_var_homo):
-        return False
+    if "NV" in indiv_geno: # allele depth (ref+alt)
+        nv = indiv_geno["NV"]
+    elif "AD" in indiv_geno:
+        nv = indiv_geno["AD"].split(',',1)[1] if ',' in indiv_geno["AD"] else '0' # AD --> NV
+        indiv_geno["NV"] = nv # add NV
+    else:
+        nv = '0'
+        indiv_geno["NV"] = nv # add NV
 
-    # If pat genotype same as either mot or fat
-    if pat_gt in [fat_gt, mot_gt]:
-        return False
-
-    # Test segregation: recessive
-    is_in_fat, is_in_mot = is_alts_from_mot_and_fat(pat_gt, fat_gt, mot_gt)
-    is_segregated = (is_in_fat and is_in_mot)
-
-    return is_segregated
+    if "AG" in indiv_geno: # abstract genotype
+        agt = indiv_geno["AG"]
+    else:
+        agt = '-'
+    
+    return gt, nr, nv, agt
 # fed
-
-def print_de_novo(in_vcf, indiv_ids, idx_s, de_novo_flts):
-    # Make prior
-    var_info = retrieve_vcf_data(in_vcf, idx_s)
-
-    # Proc VCF
-    for line in open(in_vcf):
-        # Print '#' lines
-        if line.startswith("#"):
-            print line.strip()
-            continue
-
-        # Proc line
-        (ref_base, alleles, smp_genos,
-         pat_geno, fat_geno, mot_geno) = proc_line(line, var_info, indiv_ids)
-
-        # Only variants in patient
-        if not is_indiv_geno_var( pat_geno ):
-            continue
-        
-        # If patient variant not in father or mother, 
-        not_in_fat = is_pat_alt_not_in_indiv( pat_geno, fat_geno )
-        not_in_mot = is_pat_alt_not_in_indiv( pat_geno, mot_geno )
-
-        # Select only parents with infrequent variant alleles
-        no_alt_in_fat = is_indiv_alt_cnt_infrequent( fat_geno, de_novo_flts )
-        no_alt_in_mot = is_indiv_alt_cnt_infrequent( mot_geno, de_novo_flts )
-
-        is_de_novo = (( not_in_fat and not_in_mot ) and # is var de novo?
-                      ( no_alt_in_fat and no_alt_in_mot ))
-
-        #is_de_novo = ( not_in_fat and not_in_mot )# is var de novo?
-
-        # Print line if de novo
-        if is_de_novo:
-            print line.strip()
-    # for end
-# fed
-
-def print_recessive(in_vcf, indiv_ids, idx_s):
-    # Make prior
-    var_info = retrieve_vcf_data(in_vcf, idx_s)
-
-    # Open VCF
-    for line in open(in_vcf):
-        # Print '#' lines
-        if line.startswith("#"):
-            print line.strip()
-            continue
-
-        # Proc line
-        (ref_base, alleles, smp_genos,
-         pat_geno, fat_geno, mot_geno) = proc_line(line, var_info, indiv_ids)
-
-        # If patient var is in father and mother
-        is_recessive = is_indiv_alt_recessive( pat_geno, fat_geno, mot_geno )
-
-        # Print line if recessive
-        if is_recessive:
-            print line.strip()
-    # for end
-# fed
-
- 
-############
-##  MAIN  ##
-############
 
 def get_abstract_gt( indiv_geno ):
-    gt, gl, gof, gq, nr, nv = indiv_geno
+    gt, nr, nv, agt = proc_variant_info( indiv_geno )
     if gt == "./.": # not defined
         agt = "-"
     elif gt == "0/0": # reference
@@ -382,28 +301,28 @@ def get_abstract_gt( indiv_geno ):
 # fed
 
 def get_inh_status( pat_geno, fat_geno, mot_geno, de_novo_flts ):
-    pat_gt, pat_gl, pat_gof, pat_gq, pat_nr, pat_nv, pat_agt = pat_geno # unpack
-    fat_gt, fat_gl, fat_gof, fat_gq, fat_nr, fat_nv, fat_agt = fat_geno
-    mot_gt, mot_gl, mot_gof, mot_gq, mot_nr, mot_nv, mot_agt = mot_geno
+    pat_gt, pat_nr, pat_nv, pat_agt = proc_variant_info(pat_geno) # unpack
+    fat_gt, fat_nr, fat_nv, fat_agt = proc_variant_info(fat_geno) # unpack
+    mot_gt, mot_nr, mot_nv, mot_agt = proc_variant_info(mot_geno) # unpack
 
     field = line.strip().split('\t')
     
-    if fat_gt == "./." or mot_gt == "./.": # either parent gt is not determined
-        return "-" # return NA's
+    if fat_gt == "./." and mot_gt == "./.": # either parent gt is not determined
+        return "inherited" # return inherited as default
     
-    if len(fat_gt) == 13 or len(mot_gt) == 13: # father sample x, mother sample o
+    if len(fat_gt) == 13 or len(mot_gt) == 13: # only one parent present
         return "inherited" # inherited
-    else:
-        if pat_agt == "ref": # patient abstract gt is ref
+    else: # parents' samples present
+        if pat_agt == "ref": # patient <abstract gt> is "ref"
             return "inherited" # inherited
         else: # patient abstract gt is non-ref
+            # see if de novo, else inherited
             not_in_fat = is_pat_alt_not_in_indiv( pat_geno, fat_geno )
             not_in_mot = is_pat_alt_not_in_indiv( pat_geno, mot_geno )
             no_alt_in_fat = is_indiv_alt_cnt_infrequent( fat_geno, de_novo_flts )
             no_alt_in_mot = is_indiv_alt_cnt_infrequent( mot_geno, de_novo_flts )
             is_de_novo = (( not_in_fat and not_in_mot ) and # is var de novo?
                           ( no_alt_in_fat and no_alt_in_mot ))
-
             if is_de_novo:
                 return "de_novo" # de novo
             else:
@@ -420,10 +339,12 @@ def proc_line(line, var_info, indiv_ids, de_novo_flts):
     # Proc
     field = line.strip().split('\t')
     chrom = field[0]
-    one_pos = int(field[1])
-    chrpos = "%s:%s" % (chrom, one_pos)
+    one_pos = field[1]
+    ref_base = field[3]
+    alt_base = field[4]
+    var_key = "%s:%s:%s:%s" % (chrom, one_pos, ref_base, alt_base)
 
-    ref_base, alleles, smp_genos = var_info[chrpos] 
+    ref_base, alleles, smp_genos = var_info[var_key] 
        
     pat_ids, fat_id, mot_id = indiv_ids # sample_id or na
     pat_genos = [smp_genos[x] for x in pat_ids] # get patient allele info; e.g. 0/1:-20.37,0.0,-37.37:35:99:22:5
@@ -435,20 +356,25 @@ def proc_line(line, var_info, indiv_ids, de_novo_flts):
     mot_agt = get_abstract_gt( mot_geno )
 
     for i, pat_agt in enumerate(pat_agts):
-        pat_genos[i] += [ pat_agt ]
-    fat_geno += [ fat_agt ]
-    if mot_agt not in mot_geno:
-        mot_geno += [ mot_agt ]
+        pat_genos[i]["AG"] = pat_agt
+    fat_geno["AG"] = fat_agt
+    mot_geno["AG"] = mot_agt
 
     pat_inhs = [get_inh_status(x, fat_geno, mot_geno, de_novo_flts) for x in pat_genos]
 
+    fat_geno["IH"] = "father"
+    mot_geno["IH"] = "mother"
     for i, pat_inh in enumerate(pat_inhs):
-        pat_genos[i] += [ pat_inh ]
+        pat_genos[i]["IH"] = pat_inh
 
     return (ref_base, alleles,
             pat_genos, fat_geno, mot_geno)
 # fed
 
+ 
+############
+##  MAIN  ##
+############
 
 if __name__ == "__main__":
 
@@ -468,10 +394,11 @@ if __name__ == "__main__":
 
     var_info = retrieve_vcf_data(in_vcf, idx_s)
     for line in open(in_vcf):
-        if line.startswith("##"):
+        if line.startswith("##"): # skip header
+            ##if line.startswith("##FORMAT=<ID=GT,"):
             print line.strip()
             continue
-        elif line.startswith('#'):
+        elif line.startswith('#'): # get sample genotype column index
             field = line.strip().split('\t')
             pat_ids = [x for x in field[idx_s:] if (x!=fat_id and x!=mot_id)]
             fat_idx = field.index( fat_id ) if fat_id != "-" else None
@@ -479,7 +406,7 @@ if __name__ == "__main__":
             pat_idxs = [field.index(x) for x in pat_ids]
             indiv_ids = (pat_ids, fat_id, mot_id)
             print "##FORMAT=<ID=AG,Number=.,Type=String,Description=\"Abstract genotype: -, ref, het1, het2, hom, not_ref\">"
-            print "##FORMAT=<ID=IH,Number=.,Type=String,Description=\"Inheritence status: inherited, de_novo\">"
+            print "##FORMAT=<ID=IH,Number=.,Type=String,Description=\"Inheritence status: -, father, mother, inherited, de_novo\">"
             print line.strip()
             continue
 
@@ -488,13 +415,14 @@ if __name__ == "__main__":
          pat_geno, fat_geno, mot_geno) = proc_line(line, var_info, indiv_ids, de_novo_flts)
 
         field = line.strip().split('\t')
-        field[idx_s-1] = "GT:GL:GOF:GQ:NR:NV:AG:IH"
+        field[idx_s-1] = formats_string
         for i, pat_idx in enumerate(pat_idxs):
-            field[pat_idx] = ':'.join(pat_geno[i])
+            field[pat_idx] = ':'.join([pat_geno[i][x] for x in formats_list]) # ':'.join(pat_geno[i])
+
         if fat_idx:
-            field[fat_idx] = ':'.join(fat_geno)
+            field[fat_idx] = ':'.join([fat_geno[x] for x in formats_list]) #':'.join(fat_geno)
         if mot_idx:
-            field[mot_idx] = ':'.join(mot_geno)
+            field[mot_idx] = ':'.join([mot_geno[x] for x in formats_list]) #':'.join(mot_geno)
         print '\t'.join(field)
     # for line end
 
