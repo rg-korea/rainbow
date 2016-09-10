@@ -54,7 +54,7 @@ def retrieve_vcf_data(vcf_file, idx_s):
             smp_genos["-"] = "0/1/2/3/4/5/6:0.0,0.0,0.0:0:0:0:0".split(':') # if sample not present ##@##
             
             var_tuple = ( ref_base, alleles, smp_genos )
-            var_info[var_key] = var_tuple # var_info[chr_pos] = variant information for the chr:pos
+            var_info[var_key] = var_tuple # var_info[var_key] = variant information for the chr:pos
         # fi
     # for line end
     return var_info 

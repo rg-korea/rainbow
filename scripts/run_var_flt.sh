@@ -98,7 +98,7 @@ raw_vep=$flt_vcf_dir/${pat_id}.${inh_type}_${af_cut}.vep
 flt_vep=$flt_vcf_dir/${pat_id}.${inh_type}_${af_cut}.flt.vep
 cmp_het_vep=$flt_vcf_dir/${pat_id}.${inh_type}_${af_cut}.ch.vep 
 cmp_het_flt_vep=$flt_vcf_dir/${pat_id}.${inh_type}_${af_cut}.cp.flt.vep
-fin_output=$result_dir/${pat_id}.${inh_type}_${af_cut}.result.txt
+fin_output=$result_dir/${pat_id}.${inh_type}_${af_cut}.result.csv
 
 
 # Set commands

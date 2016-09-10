@@ -82,7 +82,7 @@ def get_vcf_data(in_vcf, pat_id, idx_s):
 
 def print_output(var_info, in_vep): 
     printed_gene = dict()
-    header = ("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % 
+    header = ("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" % 
               ("Genomic location", "Ref. allele", "Var. allele", "Gene symbol", "Consequence",
                "Amino acids", "Codons", "Read depth", "Var. allele count", "SIFT", "PolyPhen"))
     print header
@@ -97,6 +97,7 @@ def print_output(var_info, in_vep):
     
         (upvar, loc, al, gene_no, nm_id, feat, result, cdnap, cdsp, 
          protp, aas, codons, known_var, extra) = field
+        result = result.replace(',', ';') # , removed to fit with csv output
     
         if not nm_id.startswith("NM_"): # skip non NM's
             continue
@@ -108,7 +109,12 @@ def print_output(var_info, in_vep):
         ( ref_base, alt_base, smp_genos, depth, var_depth ) = var_tuple
     
         # STRAND=-1;SYMBOL=TBC1D32;SIFT=tolerated(0.2);PolyPhen=benign(0.007)
-        gene_sym = re.search("SYMBOL=([A-Z\d]+)", extra).groups()[0]
+        gene_src = re.search("SYMBOL=([A-Z\d-]+)", extra)
+        if not gene_src: # NM id present but no gene symbol present
+            continue # do not print
+        else:
+            gene_sym = gene_src.groups()[0]
+
         if gene_sym in printed_gene: # skip if geneSym is already printed
             if printed_gene[gene_sym] == chrpos:
                 continue
@@ -123,7 +129,7 @@ def print_output(var_info, in_vep):
         sift = sift_re.groups()[0] if sift_re else ""
         polyphen = polyphen_re.groups()[0]+')' if polyphen_re else ""
         
-        print_line = ("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" %
+        print_line = ("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" %
                       (chrpos, ref_base, alt_base, gene_sym, result, 
                        aas, codons, depth, var_depth, sift, polyphen))
         print print_line
