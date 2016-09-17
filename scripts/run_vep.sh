@@ -5,8 +5,6 @@
 perl=/usr/bin/perl # do not change version from v5.18.2
 [ ! -f $perl ] && { echo "ERROR: $perl does not exist."; exit 1; }
 bash=/bin/bash
-[ ! -f $bash ] && { echo "ERROR: $bash does not exist."; exit 1; }
-vep_dir=/BiO/rgi/bin/ensembl-tools-release-78/scripts/variant_effect_predictor
 [ ! -d $vep_dir ] && { echo "ERROR: $vep_dir does not exist."; exit 1; }
 vep=variant_effect_predictor.pl
 [ ! -f $vep_dir/$vep ] && { echo "ERROR: $vep_dir/$vep does not exist."; exit 1; }
@@ -14,9 +12,14 @@ vep=variant_effect_predictor.pl
 cache_dir=/BiO/rgi/data/db/vep
 [ ! -d $cache_dir ] && { echo "ERROR: $cache_dir does not exist."; exit 1; }
 
-[ $# -ne 2 ] && { echo -e "\nUsage: $0 <project symbol> <patient ID>\n"; exit 1; }
+[ $# -ne 3 ] && { echo -e "\nUsage: $0 <project symbol> <patient ID> <vep version>\n"; exit 1; }
 psym=$1
 pat_id=$2
+vep_pf=$3
+
+[ ! -f $bash ] && { echo "ERROR: $bash does not exist."; exit 1; }
+vep_dir=/BiO/rgi/bin/ensembl-tools-release-$vep_pf/scripts/variant_effect_predictor
+
 
 in_dir=/BiO/rgi/data/var_flt/$psym
 [ ! -d $in_dir ] && { echo "ERROR: $in_dir does not exist."; exit 1; }

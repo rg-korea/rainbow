@@ -1,5 +1,5 @@
 # Created: August 8th 2015
-# Last update: July 1st 2016
+# Last update: September 19th 2016
 # Author: Seongmin Choi <seongmin.choi@raregenomics.org>
 
 # Settings
@@ -52,29 +52,29 @@ var_flt_dir=$data_dir/var_flt
 raw_vcf_dir=$data_dir/platypus/$psym
 flt_vcf_dir=$data_dir/var_flt/$psym
 result_dir=$data_dir/result
-ba_dict_dir=$rainbow_dir/data/db/ba_dict
+snp_db_dir=$rainbow_dir/data/db/snp_db
 cache_dir=$rainbow_dir/data/db/vep
 [ ! -d $var_flt_dir ] && { echo "LOG: $var_flt_dir does not exist. Creating directory..."; mkdir $var_flt_dir; }
 [ ! -d $raw_vcf_dir ] && { echo "ERROR: $raw_vcf_dir does not exist."; exit 1; }
 [ ! -d $flt_vcf_dir ] && { echo "LOG: $flt_vcf_dir does not exist. Creating directory..."; mkdir $flt_vcf_dir; }
 [ ! -d $flt_vcf_dir ] && { echo "LOG: $result_dir does not exist. Creating directory..."; mkdir $flt_vcf_dir; }
-[ ! -d $ba_dict_dir ] && { echo "ERROR: $ba_dict_dir does not exist."; exit 1; }
+[ ! -d $snp_db_dir ] && { echo "ERROR: $snp_db_dir does not exist."; exit 1; }
 [ ! -d $cache_dir ] && { echo "ERROR: $cache_dir does not exist."; exit 1; }
 
-db1=$ba_dict_dir/dbsnp_138.hg19.caf${af_cut}.vcf.bad
-db2=$ba_dict_dir/1000G.hg19.maf${af_cut}.vcf.bad
-db3=$ba_dict_dir/gonl.r5.hg19.maf${af_cut}.vcf.bad
-db4=$ba_dict_dir/snp142Common.flt.bed.bad
-db5=$ba_dict_dir/EVS.hg19.maf${af_cut}.vcf.bad
-db6=$ba_dict_dir/ExAC.r0.3.sites.vep.hg19.maf${af_cut}.vcf.bad
+db1=$snp_db_dir/dbSNP/All_20150605.vcf.gz # add af_cut for commands below
+db2=$snp_db_dir/1000G # DB directory
+db3=$snp_db_dir/GoNL # DB directory
+db4=$snp_db_dir/EVS # DB directory
+db5=$snp_db_dir/ExAC/ExAC.r0.3.sites.vep.vcf.gz
+db6=$snp_db_dir/UCSC/simpleRepeat.bed.gz # UCSC simple tandem repeat region
 [ ! -f $db1 ] && { echo "ERROR: $db1 does not exist."; exit 1; }
-[ ! -f $db2 ] && { echo "ERROR: $db2 does not exist."; exit 1; }
-[ ! -f $db3 ] && { echo "ERROR: $db3 does not exist."; exit 1; }
-[ ! -f $db4 ] && { echo "ERROR: $db4 does not exist."; exit 1; }
+[ ! -d $db2 ] && { echo "ERROR: $db2 does not exist."; exit 1; }
+[ ! -d $db3 ] && { echo "ERROR: $db3 does not exist."; exit 1; }
+[ ! -d $db4 ] && { echo "ERROR: $db4 does not exist."; exit 1; }
 [ ! -f $db5 ] && { echo "ERROR: $db5 does not exist."; exit 1; }
 [ ! -f $db6 ] && { echo "ERROR: $db6 does not exist."; exit 1; }
 
-region_bad=$ba_dict_dir/hg19_refGene_ext7.bad # ref_gene region
+region_bad=$snp_db_dir/hg19_refGene_ext7.bad # ref_gene region
 [ ! -f $region_bad ] && { echo "ERROR: $region_bad does not exist."; exit 1; }
 
 raw_vcf=$raw_vcf_dir/$psym.vcf
@@ -102,31 +102,33 @@ fin_output=$result_dir/${pat_id}.${inh_type}_${af_cut}.result.csv
 
 
 # Set commands
+cmd0="echo -e \"* Case $psym\n* Samples[father/mother/patient] $fat_id/$mot_id/$pat_id\n* Inheritance pattern $inh_type\n* MAF cutoff $af_cut\" 1>&2"
 cmd1="$python $scripts_dir/get_target_var.py $raw_vcf $region_bad > $reg_flt_vcf" # filter variants not in the exome-captured regions
 cmd2="$python $scripts_dir/specify_variants.py $reg_flt_vcf $fat_id $mot_id > $spec_var_vcf" # filter variants according to the given pedigree
 cmd3="$python $scripts_dir/platypus_call_flt.py $spec_var_vcf $pat_id > $var_flt_vcf" # filter variants according to calling quality
 cmd4="$python $scripts_dir/pedigree_flt.py $var_flt_vcf $inh_flt $inh_type $pat_id:$pat_flt $fat_id:$fat_flt $mot_id:$mot_flt > $ped_flt_vcf" # filter variants according to the given pedigree
-cmd5="$python $scripts_dir/dbsnp_flt.py $ped_flt_vcf $db1 > $db1_flt_vcf" # filter variants according to common SNP data
-cmd6="$python $scripts_dir/dbsnp_flt.py $db1_flt_vcf $db2 > $db2_flt_vcf" # filter variants according to common SNP data
-cmd7="$python $scripts_dir/dbsnp_flt.py $db2_flt_vcf $db3 > $db3_flt_vcf" # filter variants according to common SNP data
-cmd8="$python $scripts_dir/dbsnp_flt.py $db3_flt_vcf $db4 > $db4_flt_vcf" # filter variants according to common SNP data
-cmd9="$python $scripts_dir/dbsnp_flt.py $db4_flt_vcf $db5 > $db5_flt_vcf" # filter variants according to common SNP data
-cmd10="$python $scripts_dir/dbsnp_flt.py $db5_flt_vcf $db6 > $db6_flt_vcf" # filter variants according to common SNP data
+cmd5="$python $scripts_dir/dbflt_dbsnp.py $ped_flt_vcf $db1 $af_cut > $db1_flt_vcf" # filter variants according to common SNP data
+cmd6="$python $scripts_dir/dbflt_1000g.py $db1_flt_vcf $db2 $af_cut > $db2_flt_vcf" # filter variants according to common SNP data
+cmd7="$python $scripts_dir/dbflt_gonl.py $db2_flt_vcf $db3 $af_cut > $db3_flt_vcf" # filter variants according to common SNP data
+cmd8="$python $scripts_dir/dbflt_evs.py $db3_flt_vcf $db4 $af_cut > $db4_flt_vcf" # filter variants according to common SNP data
+cmd9="$python $scripts_dir/dbflt_exac.py $db4_flt_vcf $db5 $af_cut > $db5_flt_vcf" # filter variants according to common SNP data
+cmd10="$python $scripts_dir/dbflt_str.py $db5_flt_vcf $db6 > $db6_flt_vcf" # filter variants according to common SNP data
 cmd11="$python $scripts_dir/extract_patient_vcf.py $db6_flt_vcf $pat_id > $fin_vcf" # final VCF
-cmd12="echo \"[`date`] VEP run initiated.\" 1>&2; $perl $vep_dir/$vep $vep_opts --dir $cache_dir -i $fin_vcf -o $raw_vep > /dev/null 2>&1" # run VEP
+cmd12="echo \"[`LC_TIME=en_US date`] VEP run initiated.\" 1>&2; $perl $vep_dir/$vep $vep_opts --dir $cache_dir -i $fin_vcf -o $raw_vep > /dev/null 2>&1" # run VEP
 cmd13="$bash $scripts_dir/vep_flt.sh $psym $raw_vep > $flt_vep" # filter VEP output
 cmd14="$python $scripts_dir/arrange_vep.py $flt_vep $fin_vcf $pat_id > $fin_output" # make final output
 
-cmds="$cmd1; $cmd2; $cmd3; $cmd4; $cmd5; $cmd6; $cmd7; $cmd8; $cmd9; $cmd10; $cmd11; $cmd12; $cmd13; $cmd14" # commands for non-compound-heteros
+cmds="$cmd0; $cmd1; $cmd2; $cmd3; $cmd4; $cmd5; $cmd6; $cmd7; $cmd8; $cmd9; $cmd10; $cmd11; $cmd12; $cmd13; $cmd14" # commands for non-compound-heteros
 
-cmdF="$cmd1; $cmd2; $cmd3; $cmd4; $cmd5; $cmd6; $cmd7; $cmd8; $cmd9; $cmd10; $cmd11; $cmd12; $cmd13" # commands for compound heteros - part 1
+# Compound hetero cases
+cmdF="$cmd0; $cmd1; $cmd2; $cmd3; $cmd4; $cmd5; $cmd6; $cmd7; $cmd8; $cmd9; $cmd10; $cmd11; $cmd12; $cmd13" # commands for compound heteros - part 1
 cmdC1="$python $scripts_dir/compound_hetero_flt.py $db6_flt_vcf $flt_vep $pat_id $fat_id $mot_id > $cmp_het_vcf" # take compound hetero variant only
 cmdC2="$python $scripts_dir/extract_patient_vcf.py $cmp_het_vcf $pat_id > $fin_vcf" # final VCF
-cmdC3="echo \"[`date`] VEP run initiated.\" 1>&2; $perl $vep_dir/$vep $vep_opts --dir $cache_dir -i $fin_vcf -o $cmp_het_vep > /dev/null 2>&1" # run VEP agian, for compound heteros
+cmdC3="echo \"[`LC_TIME=en_US date`] VEP run initiated.\" 1>&2; $perl $vep_dir/$vep $vep_opts --dir $cache_dir -i $fin_vcf -o $cmp_het_vep > /dev/null 2>&1" # run VEP agian, for compound heteros
 cmdC4="$bash $scripts_dir/vep_flt.sh $psym $cmp_het_vep > $cmp_het_flt_vep" # filter VEP output
 cmdC5="$python $scripts_dir/arrange_vep.py $cmp_het_flt_vep $fin_vcf $pat_id > $fin_output" # make final output
 [ $ch_flag -ne 0 ] && { cmds="$cmdF; $cmdC1; $cmdC2; $cmdC3; $cmdC4; $cmdC5"; } # commands for compound heteros - part 2
 
 # Run
-cmds="$cmds"
+cmds="$cmds; echo "" 1>&2"
 eval $cmds

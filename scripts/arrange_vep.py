@@ -43,9 +43,11 @@ def get_chrpos(upvar):
     return chrpos
 # fed 
 
-def get_vcf_data(in_vcf, pat_id, idx_s):
+def get_vcf_data(vcf_file, pat_id, idx_s):
+    """Process VCF data and the allele genotype information
+    for all input samples."""
     var_info = dict()
-    for line in open(in_vcf):
+    for line in open(vcf_file, "r"):
         if line.startswith("##"):
             continue
         elif line.startswith("#CHROM"):
@@ -54,31 +56,72 @@ def get_vcf_data(in_vcf, pat_id, idx_s):
         else:
             field = line.strip().split('\t')
             chrom = field[0] # chromosome
-            one_pos = int(field[1]) # one-based position
-            chrpos = "%s:%s" % (chrom, one_pos) # chr:pos allele position
+            one_pos = field[1] # one-based position
             ref_base = field[3] # C; reference base
             alt_base = field[4] # T,AC ; alterated alleles
-            
-            formats = [ x.split(':') for x in field[idx_s:] ] # genotype information of chr:pos, for all samples
-            smp_genos = { x: formats[smp_ids.index(x)] for x in smp_ids } # smp_genos[sample_id] = allele_genotype_information
-            smp_genos["-"] = "0/1/2/3/4/5/6:0.0,0.0,0.0:0:0:0:0".split(':') # if sample not present
-            # 0/1 -209.52,0.0,-196.62 1 99 152 76 het1 inherited
-            depth = smp_genos[pat_id] [4]
-            var_depth = smp_genos[pat_id] [5]
-    
+            alleles = alt_base.split(',') # [C,T,AG]; alterated alleles
+            chrpos = "%s:%s" % (chrom, one_pos) # chr:pos            
+            formats = field[idx_s-1].split(':') # [GT:NR:NV]
+            smp_genos = dict()
+            for i, smp_info_string in enumerate(field[idx_s:]):
+                smp_id = smp_ids[i] # e.g. case_patient
+                smp_info_annotated = zip(formats, smp_info_string.split(':')) # [ ("GT", "0/1"), ("NR", "52"), ... ]
+                smp_info = {x[0]:x[1] for x in smp_info_annotated} # {"GT": "0/1", "NR": "52", ...}
+                smp_genos[smp_id] = smp_info
+            # for i, string done
+            smp_genos["-"] = "0/1/2/3/4/5/6:0.0,0.0,0.0:0:0:0:0".split(':') # if sample not present ##@##
+            depth = smp_genos[pat_id]["NR"]
+            var_depth = smp_genos[pat_id]["NV"]
             if depth.count(',') and not alt_base.count(','):
                 depth = depth.split(',')[-1]
                 var_depth = var_depth.split(',')[-1]
             else:
                 pass
             # fi
+            
             var_tuple = ( ref_base, alt_base, smp_genos, depth, var_depth )
-            var_info[chrpos] = var_tuple
+            var_info[chrpos] = var_tuple # var_info[chrpos] = variant information for the chr:pos
         # fi
     # for line end
-    
-    return var_info
+    return var_info 
 # fed
+
+##@##def get_vcf_data(in_vcf, pat_id, idx_s):
+##@##    var_info = dict()
+##@##    for line in open(in_vcf):
+##@##        if line.startswith("##"):
+##@##            continue
+##@##        elif line.startswith("#CHROM"):
+##@##            smp_ids = line.strip().split('\t') [idx_s:] # get sample names
+##@##            continue
+##@##        else:
+##@##            field = line.strip().split('\t')
+##@##            chrom = field[0] # chromosome
+##@##            one_pos = int(field[1]) # one-based position
+##@##            chrpos = "%s:%s" % (chrom, one_pos) # chr:pos allele position
+##@##            ref_base = field[3] # C; reference base
+##@##            alt_base = field[4] # T,AC ; alterated alleles
+##@##            
+##@##            formats = [ x.split(':') for x in field[idx_s:] ] # genotype information of chr:pos, for all samples
+##@##            smp_genos = { x: formats[smp_ids.index(x)] for x in smp_ids } # smp_genos[sample_id] = allele_genotype_information
+##@##            smp_genos["-"] = "0/1/2/3/4/5/6:0.0,0.0,0.0:0:0:0:0".split(':') # if sample not present
+##@##            # 0/1 -209.52,0.0,-196.62 1 99 152 76 het1 inherited
+##@##            depth = smp_genos[pat_id] [4]
+##@##            var_depth = smp_genos[pat_id] [5]
+##@##    
+##@##            if depth.count(',') and not alt_base.count(','):
+##@##                depth = depth.split(',')[-1]
+##@##                var_depth = var_depth.split(',')[-1]
+##@##            else:
+##@##                pass
+##@##            # fi
+##@##            var_tuple = ( ref_base, alt_base, smp_genos, depth, var_depth )
+##@##            var_info[chrpos] = var_tuple
+##@##        # fi
+##@##    # for line end
+##@##    
+##@##    return var_info
+##@### fed
 
 def print_output(var_info, in_vep): 
     printed_gene = dict()
@@ -109,7 +152,7 @@ def print_output(var_info, in_vep):
         ( ref_base, alt_base, smp_genos, depth, var_depth ) = var_tuple
     
         # STRAND=-1;SYMBOL=TBC1D32;SIFT=tolerated(0.2);PolyPhen=benign(0.007)
-        gene_src = re.search("SYMBOL=([A-Z\d-]+)", extra)
+        gene_src = re.search("SYMBOL=([a-zA-Z\d-]+)", extra)
         if not gene_src: # NM id present but no gene symbol present
             continue # do not print
         else:

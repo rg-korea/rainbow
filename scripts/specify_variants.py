@@ -51,7 +51,7 @@ def retrieve_vcf_data(vcf_file, idx_s):
                 smp_info = {x[0]:x[1] for x in smp_info_annotated} # {"GT": "0/1", "NR": "52", ...}
                 smp_genos[smp_id] = smp_info
             # for i, string done
-            smp_genos["-"] = "0/1/2/3/4/5/6:0.0,0.0,0.0:0:0:0:0".split(':') # if sample not present ##@##
+            smp_genos["-"] = {"GT":"0/1/2/3/4/5/6", "NR":'0', "NV":'0'} # if sample not present ##@##
             
             var_tuple = ( ref_base, alleles, smp_genos )
             var_info[var_key] = var_tuple # var_info[var_key] = variant information for the chr:pos

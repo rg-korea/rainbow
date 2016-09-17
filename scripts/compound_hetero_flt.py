@@ -84,7 +84,7 @@ def get_vep_data(in_vep):
 def is_comp_het(field, idx_s, smp_ids, 
                 pat_id, fat_id, mot_id, mutated):
     # 1/0 : -6.79,0.0,-37.39 : 11 : 68 : 19 : 6 : het1 : inherited
-    hets = [ x.split(':')[6] for x in field[idx_s:] ] # heterogeneity type of chr:pos, for all samples
+    hets = [ x.split(':')[3] for x in field[idx_s:] ] # heterogeneity type of chr:pos, for all samples
     pat_het = hets[smp_ids.index(pat_id)]
     fat_het = hets[smp_ids.index(fat_id)] if fat_id != "-f" else False
     mot_het = hets[smp_ids.index(mot_id)] if mot_id != "-m" else False

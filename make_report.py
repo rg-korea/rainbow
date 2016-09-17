@@ -49,7 +49,7 @@ def get_flt_opt( inh_type ):
         pat_flt = "not_ref"
         fat_flt = "ref"
         mot_flt = "ref"
-        assert (fat_aff=="n" and mot_aff=="n"), "ERROR: Parents should NOT be affected for %s" % inh_type
+        ##@##assert (fat_aff=="n" and mot_aff=="n"), "ERROR: Parents should NOT be affected for %s" % inh_type
     elif inh_type == "AC": # autosomal compound heterozygous. e.g. A1A2,a1A2 x A1A2,A1a2 --> a1A2,A1a2
         inh_flt = "inherited"
         pat_flt = "het1"
@@ -59,13 +59,13 @@ def get_flt_opt( inh_type ):
         inh_flt = "inherited"
         pat_flt = "het1"
         fat_flt = "ref_hom"
-        assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
+        ##@##assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
         mot_flt = "all"
     elif inh_type == "YL": # Y-linked. XY' x XX --> XY'
         inh_flt = "inherited"
         pat_flt = "hom"
         fat_flt = "hom"
-        assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
+        ##@##assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
         mot_flt = "ref"
     elif inh_type == "MT": # mitochondrial. MMMm x MMMmmm --> mm
         inh_flt = "inherited"
@@ -77,23 +77,6 @@ def get_flt_opt( inh_type ):
     # fi
 
     return inh_flt, pat_flt, fat_flt, mot_flt
-# fed
-
-
-# Set GMAF cutoff
-def get_maf_cut( stringency ):
-    if stringency == "4":
-        maf_cut = "0"
-    elif stringency == "3":
-        maf_cut = "0005"
-    elif stringency == "2":
-        maf_cut = "001"
-    elif stringency == "1":
-        maf_cut = "010"
-    else:
-        sys.exit("ERROR: Unsupported stringency (%s)" % stringency)
-    # fi
-    return maf_cut
 # fed
 
 
@@ -138,7 +121,7 @@ while line != "":
             continue
         inh_types = next_line.split('#')[0].strip().split(',')
         continue
-    elif line.startswith("# Filter stringency"):
+    elif line.startswith("# MAF ("):
         next_line = info_file.readline()
         while next_line.startswith('#'):
             next_line = info_file.readline()
@@ -166,7 +149,7 @@ for inh_type in inh_types:
     ch_flag = "1" if inh_type in ["AC", "XC"] else "0" # compount het?
     
     for stringency in stringencies:
-        maf_cut = get_maf_cut(stringency)
+        maf_cut = float(stringency)
         # Make command
         cmd = ("/bin/bash %s/scripts/run_var_flt.sh %s %s %s %s %s %s %s %s %s %s %s %s"
                % (abs_dir, psym, inh_flt, ch_flag, maf_cut, pat_id, pat_flt, fat_id, fat_flt, mot_id, mot_flt, inh_type, data_dir))
