@@ -49,7 +49,7 @@ def get_flt_opt( inh_type ):
         pat_flt = "not_ref"
         fat_flt = "ref"
         mot_flt = "ref"
-        ##@##assert (fat_aff=="n" and mot_aff=="n"), "ERROR: Parents should NOT be affected for %s" % inh_type
+        assert (fat_aff=="n" and mot_aff=="n"), "ERROR: Parents should NOT be affected for %s" % inh_type
     elif inh_type == "AC": # autosomal compound heterozygous. e.g. A1A2,a1A2 x A1A2,A1a2 --> a1A2,A1a2
         inh_flt = "inherited"
         pat_flt = "het1"
@@ -59,13 +59,13 @@ def get_flt_opt( inh_type ):
         inh_flt = "inherited"
         pat_flt = "het1"
         fat_flt = "ref_hom"
-        ##@##assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
+        assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
         mot_flt = "all"
     elif inh_type == "YL": # Y-linked. XY' x XX --> XY'
         inh_flt = "inherited"
         pat_flt = "hom"
         fat_flt = "hom"
-        ##@##assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
+        assert fat_aff=="y", "ERROR: Father should be affected for %s" % inh_type
         mot_flt = "ref"
     elif inh_type == "MT": # mitochondrial. MMMm x MMMmmm --> mm
         inh_flt = "inherited"
