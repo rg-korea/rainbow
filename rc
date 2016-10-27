@@ -18,6 +18,9 @@ picard_pf=picard-tools-1.96
 samtools_url=http://sourceforge.net/projects/samtools/files/samtools/1.3/samtools-1.3.tar.bz2
 samtools_pf=samtools-1.3
 
+pytabix_url=https://pypi.python.org/packages/c5/37/e30f6b04237801d072938ca55fde9c3773cc981043152a9ccc16a028f321/pytabix-0.0.2.tar.gz
+pytabix_pf=pytabix-0.0.2
+
 filerec_url=http://search.cpan.org/CPAN/authors/id/D/DM/DMUEY/File-Copy-Recursive-0.38.tar.gz
 filerec_pf=File-Copy-Recursive-0.38
 
