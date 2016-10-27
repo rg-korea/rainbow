@@ -36,9 +36,10 @@ y/n/n
 #   then write: AH,DN,AC
 AH
 
-# Filter stringency (options: 1, 2, 3, 4 [lenient to stringent])
-# ALWAYS: separated by commas and only commas /,/
-#   example: 1,2,3,4
-#   example: 4
-#   NOT an example: 1, 2, 3, 4 or 1 2 3 4
-1,2,3,4
+# MAF (Minor Allele Frequency) cutoff.
+# ALWAYS: floating point number; can be 0 (most stringent), and separated by commas and only commas /,/
+#   remove non-pathogenic variants with known MAF >= this cutoff
+#   example: 0.005,1e-2
+#   example: 5.0e-4
+#   NOT an example: 
+0,0.005,1e-2

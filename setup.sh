@@ -130,7 +130,7 @@ else {
 }; fi
 
 # Install picard-tools-1.96 (must have separate .jar files)
-res=`java -jar $bin/$picard_pf/AddOrReplaceReadGroups.jar --version 2>&1 | wc -l`
+res=`java -jar $bin/$picard_pf/AddOrReplaceReadGroups.jar --version 2>&1 | grep -v Error | wc -l`
 if [ $res -ne 0 ]; then
     write_log "Picard already exists." $setup_log
 else {
@@ -169,6 +169,21 @@ else {
     ./buildPlatypus.sh &&
     cd $wkdir &&
     write_log "Completed Platypus install." $setup_log || write_error "Platypus not installed." $setup_log
+}; fi
+
+# Install Pytabix
+res=`$bin/$python_pf/python -c "import tabix; tb = tabix.open(\"na\");" 2>&1 | grep TabixError | wc -l`
+if [ $res -ne 0 ]; then
+    write_log "Pytabix already exists." $setup_log
+else {
+    wget $pytabix_url -P $bin &&
+    check_file $bin/$pytabix_pf.tar.gz &&
+    tar -zxf $bin/$pytabix_pf.tar.gz -C $bin &&
+    cd $bin/$pytabix_pf &&
+    $bin/$python_pf/python ./setup.py install &&
+    cd $wkdir &&
+    rm $bin/$pytabix_pf.tar.gz &&
+    write_log "Completed Pytabix install." $setup_log || write_error "Pytabix not installed." $setup_log
 }; fi
 
 # Install Recursive.pm
@@ -241,12 +256,12 @@ else {
 }; fi
 
 # Install Ensembl Varient Effect Predictor
-[ ! -d $wkdir/data/db ] && { mkdir $wkdir/data/db; } &&
-check_dir $wkdir/data/db &&
-[ ! -d $wkdir/data/db/vep ] && { mkdir $wkdir/data/db/vep; } &&
-check_dir $wkdir/data/db/vep &&
-refseq_db_dir=$wkdir/data/db/vep/homo_sapiens_refseq
-res=`ls $refseq_db_dir | grep GRCh37 | wc -l`
+[ ! -d $wkdir/data/db ] && { mkdir $wkdir/data/db; } 
+check_dir $wkdir/data/db 
+[ ! -d $wkdir/data/db/vep ] && { mkdir $wkdir/data/db/vep; } 
+check_dir $wkdir/data/db/vep
+refseq_db_dir=${wkdir}/data/db/vep/homo_sapiens_refseq 
+res=`\ls $refseq_db_dir | grep GRCh37 | wc -l`
 if [ $res -ne 0 ]; then
     write_log "VEP already exists." $setup_log
 else {

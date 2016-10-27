@@ -7,7 +7,7 @@
 psym=$1
 in_vep=$2
 
-echo "[`date`] $0 run initiated."
+echo "[`LC_TIME=en_US date`] $0 run initiated." 1>&2
 
 cmd="cat $in_vep"
 cmd="$cmd | grep NM_"

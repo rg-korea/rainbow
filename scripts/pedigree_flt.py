@@ -25,8 +25,13 @@ def get_abgt_list(indiv_flt):
     # fi
 # fed
 
-def chrom_fit_pedigree(inh_type, chrom):
+def chrom_fit_pedigree(inh_type, chrom, chrom_ids):
     chrom_id = chrom.replace("chr",'')
+    if chrom_id in chrom_ids:
+        pass
+    else:
+        return False # remove contigs
+
     if inh_type.startswith('X'): # X-linked dominant/recessive
         if chrom_id.count('X'):
             return True
@@ -48,6 +53,10 @@ def chrom_fit_pedigree(inh_type, chrom):
             return True
         else:
             return False
+
+    elif inh_type == "DN":
+        return True
+        
     else: # ERROR
         sys.exit("ERROR: inh_type: %s, chromosome:%s" % (inh_type, chrom))
     # fi
@@ -55,6 +64,7 @@ def chrom_fit_pedigree(inh_type, chrom):
 
 def print_filtered_vcf(in_vcf, inh_type, inh_flt, pat_id, fat_id, mot_id,
                        pat_abgt_list, fat_abgt_list, mot_abgt_list):
+    chrom_ids = [str(x) for x in range(1,23)] + ['X', 'Y', 'M', "MT"]
     for line in open(in_vcf, "r"):
         if line.startswith("##"): # header line
             print line.strip()
@@ -69,7 +79,8 @@ def print_filtered_vcf(in_vcf, inh_type, inh_flt, pat_id, fat_id, mot_id,
         else: # variant line
             field = line.strip().split('\t')
             chrom = field[0]
-            if not chrom_fit_pedigree(inh_type, chrom): # flt out non-fit chromosomes
+            # chromosome ID test; filter out non-fit chromosomes
+            if not chrom_fit_pedigree(inh_type, chrom, chrom_ids): 
                 continue
             pat_abgt, pat_inh = field[pat_idx].split(':')[-2:]
             fat_abgt = field[fat_idx].split(':')[-2] if fat_idx else "-"
@@ -109,7 +120,7 @@ if __name__ == "__main__":
     # fi
 
     if pat_id == "-":
-        sys.exit("ERROR: Patiend ID must be present.")
+        sys.exit("ERROR: Patient ID must be present.")
 
     pat_abgt_list = get_abgt_list(pat_flt)
     fat_abgt_list = get_abgt_list(fat_flt)
