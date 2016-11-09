@@ -84,7 +84,7 @@ Example:
 4. Write ID and info files
 For each case, one ID file should be created.
 For each case or case ID, at least one sample ID should be written in
-an ID file. 
+an ID file.
 For example, If the case with the ID "test" includes three
 samples (e.g. patient, mother, father), you should include all the 
 sample IDs in the case ID file, with the case ID being the prefices.
