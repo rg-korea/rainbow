@@ -1,0 +1,2 @@
+Genomic coordinate,Reference,Variants,VAFs,Depth,HGNC Symbols,RefSeq IDs,Effects,Exon numbers,cDNA annotations,AA annotations,cDNA positions,CDS positions,AA positions
+chr3:33059944,T,A,1.00,61,GLB1;GLB1;GLB1;GLB1,NM_001317040.1;NM_001079811.2;NM_000404.3;NM_001135602.2,missense_variant;missense_variant;missense_variant;missense_variant,14/17;13/16;13/16;10/13,c.1487A>T;c.1253A>T;c.1343A>T;c.950A>T,p.Asp496Val;p.Asp418Val;p.Asp448Val;p.Asp317Val,1632/2760;1382/2510;1488/2616;1095/2223,1487/2178;1253/1944;1343/2034;950/1641,496/725;418/647;448/677;317/546

@@ -14,22 +14,6 @@ else:
     sys.exit("\nUsage: python %s <in.vcf> <in.db.bed.gz>\n" % prog_name)
 # fi
 
-
-## Module
-def has_indel(ref, alts):
-    flag_has_indel = False
-    ref_len = len(ref)
-
-    for alt in alts:
-        if ref_len == len(alt) == 1:
-            continue
-        else:
-            flag_has_indel = True
-        # fi
-    # for end 
-    return flag_has_indel
-# fed
-
 # Init tabix
 db = tabix.open(in_db)
 
@@ -47,11 +31,6 @@ for line in open(in_vcf, "r"):
     ref = field[3]
     alts = field[4].split(',')
     query_db = "chr%s:%s-%s" % (chrom_id, one_pos, one_pos)
-    flag_has_indel = has_indel(ref, alts)
-    if not flag_has_indel: # if var has no indel
-        print(line.strip())
-        continue
-
     try:
         results = db.querys(query_db) # send query
         iter_cnt = sum(1 for _ in results)
@@ -59,11 +38,11 @@ for line in open(in_vcf, "r"):
         print(line.strip())
         continue
 
-    # If at least 1 STR present
+    # If at least 1 gene region present
     if iter_cnt > 0:
+        print(line.strip())
         continue
     elif iter_cnt == 0:
-        print(line.strip())
         continue
     else:
         sys.exit("ERROR: iter_cnt = %s" % iter_cnt)
