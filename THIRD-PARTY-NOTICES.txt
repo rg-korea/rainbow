@@ -4,20 +4,16 @@ under licenses different than the RainBow software.
 In the event that we accidentally failed to list a required notice or license,
 please let us know of the fact using the below e-mail address:
 
-  rainbow-dev@googlegroups.com
-
-Files in the subdirectory bin/ and files downloaded by setup.py follow their
-own licenses. We recommend you read them after download.
+  seongmin.choi@raregenomics.org
 
 Specifically, BWA and SAMtools follow MIT License,
 Picard and Ensembl Variant Effect Predictor follow MIT License and Apache
 License v.2, and Platypus follows GNU GPLv3.
-Processed databases in the data/db/ba_dict/ subdirectory have been constructed
-from SNP data obtained from dbSNP, 1000 genomes, Genome of the Netherlands,
-UCSC common SNPs, Exome Variant Server, Exome Aggregation Consortium, and
-RefSeq database of Ensembl Variant Effect Predictor.
+SNP databases in the data subdirectory have been constructed from SNP data 
+obtained from dbSNP, 1000 genomes, Genome of the Netherlands,
+UCSC common SNPs, Exome Variant Server, and Exome Aggregation Consortium.
 Processed databases from Exome Variant Server and Exome Aggregation Consortium
 follow Open Database License,
-RefSeq database of Ensembl Variant Effect Predictor follow Apache License v.2,
-and all other databases are public.
+GATK4 follows the BSD 3-Clause "New" or "Revised" License.
+All other databases are public.
 The attached notices are provided for information only.

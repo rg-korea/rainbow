@@ -1,0 +1,15 @@
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 1778 sequences (135128 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 828, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (119, 146, 189)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (1, 329)
+[M::mem_pestat] mean and std.dev: (155.78, 49.92)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 399)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 1778 reads in 0.088 CPU sec, 0.089 real sec
+[main] Version: 0.7.17-r1188
+[main] CMD: bwa mem data/Broad/ucsc.hg19.fasta example_data/test_mother_1.fastq.gz example_data/test_mother_2.fastq.gz
+[main] Real time: 2.032 sec; CPU: 2.004 sec
