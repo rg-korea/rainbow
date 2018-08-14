@@ -20,7 +20,7 @@ from the `example_data` folder, and edit the contents, as follows.
 
 Note that when editing the `data_dir` of the config file, you should make sure 
 that all fastq files are in fastq(.gz) format, and the files should end in either
-\_1.fastq.gz, \_1.fastq, \_2.fastq.gz or \_2.fastq.
+`\_1.fastq.gz`, `\_1.fastq`, `\_2.fastq.gz` or `\_2.fastq`.
 
 ## Run
 After getting your own copy of the config file, now you can run the 
